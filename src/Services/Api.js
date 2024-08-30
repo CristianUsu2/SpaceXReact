@@ -13,4 +13,5 @@ const ObtenerMision=async(id)=>{
 }
 
 
+
 export default {ObtenerInformacion , ObtenerMision}

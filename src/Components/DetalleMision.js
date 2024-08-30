@@ -16,7 +16,8 @@ const DetalleMision = () => {
   const { id } = useParams();
   console.log("id", id)
   const [Mision, SetMision] = useState({});
-
+  let contador=0
+  
   useEffect(() => {
     Api.ObtenerMision(id)
       .then((response) => {
@@ -24,7 +25,7 @@ const DetalleMision = () => {
         SetMision(response);
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [contador]);
 
   console.log("si a bueno",Mision);
 
