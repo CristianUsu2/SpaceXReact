@@ -5,21 +5,43 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate,Link } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import './login.css'; // Asegúrate de que este archivo CSS tenga un estilo moderno
+import { useUser } from './UserContext'; // Ajusta la ruta según tu estructura de archivos
+
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate(); // Hook de navegación
 
+    // const handleSubmit = async (event) => {
+    //     event.preventDefault();
+    //     try {
+    //         const response = await authServices.login(username, password);
+    //         console.log(response); // Maneja la respuesta del servicio
+    //         localStorage.setItem('token', response.token); // Guarda el token en localStorage
+    //         toast.success('¡Acceso autorizado!'); // Mostrar mensaje de éxito
+    //         // Redirigir a la página de misiones
+    //         navigate('app/misiones');
+    //     } catch (error) {
+    //         toast.error('¡Error! Usuario o contraseña incorrectos.'); // Mostrar mensaje de error
+    //     }
+    // };
+
+    const { setUsuario } = useUser(); // Usar el hook del contexto
+
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const response = await authServices.login(username, password);
             console.log(response); // Maneja la respuesta del servicio
-            localStorage.setItem('token', response.token); // Guarda el token en localStorage
+            localStorage.setItem('token', response[0].token); // Guarda el token en localStorage
+            setUsuario(response[0].usuario); // Almacena el usuario en el contexto
+           
             toast.success('¡Acceso autorizado!'); // Mostrar mensaje de éxito
             // Redirigir a la página de misiones
             navigate('app/misiones');
+           
         } catch (error) {
             toast.error('¡Error! Usuario o contraseña incorrectos.'); // Mostrar mensaje de error
         }

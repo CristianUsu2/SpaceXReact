@@ -3,6 +3,8 @@ import { Navbar, Container ,Button} from "react-bootstrap";
 import styled from "styled-components"
 import img from "../img/SpaceX-Logo.png"
 import {Navigate,Link,useNavigate} from "react-router-dom"
+import { useUser } from './Login/UserContext'; // Importa el UserProvider
+
 
 const Imagen=styled.img`
    width: 300px;
@@ -15,6 +17,9 @@ const Imagen=styled.img`
 const Menu = () => {
   
   const navigate = useNavigate(); // Hook de navegación
+
+  const { usuario } = useUser();
+  console.log(usuario)
 
   const handleLogout = () => {
     localStorage.removeItem('token'); // Eliminar el token
@@ -35,6 +40,7 @@ const Menu = () => {
               alt="React Bootstrap logo"
             />
           </Navbar.Brand>
+          {usuario ? <p color="white"> {usuario}</p> : <p>No estás logueado.</p>}
           <Button variant="outline-light" onClick={handleLogout}>
               Cerrar Sesión
             </Button>

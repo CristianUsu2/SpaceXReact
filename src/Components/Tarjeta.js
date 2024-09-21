@@ -18,7 +18,7 @@ const Tarjeta=({ datos, ...props})=>{
           <p className='text-center'>Rocket: {datos.rocket.rocket_name}</p>
           <p className='text-center'>Type rocket: {datos.rocket.rocket_type}</p>
           </Card.Text>
-          <Link to={"/Detalle/"+datos.flight_number}>
+          <Link to={"Detalle/"+datos.flight_number}>
           <Button variant="primary" style={{width: "165px", height:"40px", marginTop: "15px", marginLeft: "70px"}}>More information</Button>
           </Link>
           </Card.Body>

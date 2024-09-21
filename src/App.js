@@ -8,9 +8,13 @@ import Login from "./Components/Login/login";
 import Register from "./Components/Register/register";
 import ProtectedRoute from "./Components/Login/ProtectedRoute";
 import Layout from "./Components/Layout"; // Importa el Layout
+import { UserProvider } from './Components/Login/UserContext'; // Importa el UserProvider
+
 
 const App = () => {
   return (
+
+    <UserProvider>
     <Routes>
       {/* Rutas sin Layout (sin menú) */}
       <Route path="/register" element={<Register />} />
@@ -26,9 +30,10 @@ const App = () => {
         }
       >
         <Route path="misiones" element={<ListaMisiones />} />
-        <Route path="detalle/:id" element={<DetalleMision />} />
+        <Route path="misiones/detalle/:id" element={<DetalleMision />} />
       </Route>
     </Routes>
+    </UserProvider>
   );
 };
 
