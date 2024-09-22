@@ -17,7 +17,7 @@
 //   console.log("id", id)
 //   const [Mision, SetMision] = useState({});
 //   let contador=0
-  
+
 //   useEffect(() => {
 //     Api.ObtenerMision(id)
 //       .then((response) => {
@@ -30,34 +30,32 @@
 //   console.log("si a bueno",Mision);
 
 //   return (
-  
+
 //     <Container>
 //       {Mision.mission_name != null ?
-      
+
 //       <Row>
-        
+
 //       <Col sm={12}>
 //         <H1>Mission {Mision.mission_name}</H1>
 //       </Col>
 //       <Col sm={6}>
 //           <Image src={Mision.links.mission_patch} style={{width: "300px", marginTop: "25px"}}/>
 //           <p className="css" persona="jeison"></p>
-//       </Col> 
-//       <Col sm={6}>
-//          {Mision.details}  
-        
 //       </Col>
-      
+//       <Col sm={6}>
+//          {Mision.details}
+
+//       </Col>
+
 //     </Row> : null}
-      
-    
+
 //     </Container>
-    
+
 //   );
 // };
 
 // export default DetalleMision;
-
 
 //---------------------------------------------------------------------------------------
 // import React, { useState, useEffect } from "react";
@@ -206,17 +204,17 @@ import { useParams } from "react-router-dom";
 import { Container, Row, Col, Image, Form, Button } from "react-bootstrap";
 import styled from "styled-components";
 import Api from "../Services/Api";
-import { FaStar } from "react-icons/fa";  // Importamos el ícono de estrella
-import { useUser } from './Login/UserContext'; // Importa el UserProvider
-
+import { FaStar } from "react-icons/fa"; // Importamos el ícono de estrella
+import { useUser } from "./Login/UserContext"; // Importa el UserProvider
+import { faTwitter, faFacebook,faYoutube } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { shareOnFacebook, shareOnTwitter, shareOnYoutube  } from "../Services/Share";
 const H1 = styled.h1`
   text-align: center;
   margin-bottom: 15px;
-  font-family: 'innhernit';
-  font-weight: '200';
+  font-family: "innhernit";
+  font-weight: "200";
 `;
-
-
 
 const StarRatingInteractive = ({ rating, onRatingChange }) => {
   const [hover, setHover] = useState(null);
@@ -246,9 +244,9 @@ const DetalleMision = () => {
   const [Mision, SetMision] = useState({});
   const [comentarios, setComentarios] = useState([]);
   const [nuevoComentario, setNuevoComentario] = useState({
-    usuario: '',
-    comentario: '',
-    valoracion: 0
+    usuario: "",
+    comentario: "",
+    valoracion: 0,
   });
   const [contador, setContador] = useState(0);
 
@@ -259,16 +257,13 @@ const DetalleMision = () => {
       })
       .catch((error) => console.log(error));
 
-
-      
-
-  // Obtener las valoraciones enviando el id de la misión
-  Api.ObtenerValoraciones(id)
-  .then((response) => {
-    setComentarios(response); // Asume que la API devuelve un array de valoraciones
-  })
-  .catch((error) => console.log(error));
-}, [id, contador]);
+    // Obtener las valoraciones enviando el id de la misión
+    Api.ObtenerValoraciones(id)
+      .then((response) => {
+        setComentarios(response); // Asume que la API devuelve un array de valoraciones
+      })
+      .catch((error) => console.log(error));
+  }, [id, contador]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -281,7 +276,9 @@ const DetalleMision = () => {
 
   const formatFecha = (date) => {
     const isoString = date.toISOString();
-    return isoString.split("T")[0] + " " + isoString.split("T")[1].split(".")[0];
+    return (
+      isoString.split("T")[0] + " " + isoString.split("T")[1].split(".")[0]
+    );
   };
 
   const { usuario } = useUser();
@@ -294,20 +291,22 @@ const DetalleMision = () => {
       usuario: usuario,
       comentario: nuevoComentario.comentario,
       fecha: formatFecha(new Date()), // Formato adecuado para MySQL
-      valoracion: nuevoComentario.valoracion
+      valoracion: nuevoComentario.valoracion,
     };
 
     // Enviar el comentario a la API
     Api.EnviarValoracion(comentarioConFecha)
       .then((response) => {
         setComentarios([...comentarios, comentarioConFecha]); // Actualizamos el estado local
-        setNuevoComentario({ email: '', comentario: '', valoracion: 0 });
+        setNuevoComentario({ email: "", comentario: "", valoracion: 0 });
         setContador(contador + 1);
       })
       .catch((error) => console.log(error));
 
-      setContador(contador + 1);  // Incrementamos el contador
+    setContador(contador + 1); // Incrementamos el contador
   };
+
+  console.log(Mision, "mision");
 
   return (
     <Container>
@@ -316,47 +315,73 @@ const DetalleMision = () => {
           {/* Columna izquierda: Detalles de la misión */}
           <Col sm={6}>
             <H1>Mission {Mision.mission_name}</H1>
-            <Image src={Mision.links?.mission_patch} style={{ width: "300px", marginTop: "25px" }} />
+            <Image
+              src={Mision.links?.mission_patch}
+              style={{ width: "300px", marginTop: "25px" }}
+            />
             <p style={{ marginTop: "15px" }}>{Mision.details}</p>
+            <Col xs={12}>
+              <h4>Compartir en redes sociales</h4>
+              <Row>
+                <Col xs={12} md={12} lg={4}>
+                  <Button
+                    style={{ width: "200px",  border: "none" }}
+                    onClick={() => shareOnFacebook(Mision.links.article_link)}
+                  >
+                    <FontAwesomeIcon icon={faFacebook} /> Facebook
+                  </Button>
+                </Col>
+                <Col xs={12} md={12} lg={4}>
+                  <Button style={{ width: "200px", backgroundColor: "black", border: "none" }} onClick={()=>shareOnTwitter(Mision.mission_name,Mision.details,Mision.links.article_link)}>
+                    <FontAwesomeIcon icon={faTwitter} /> Twitter
+                  </Button>
+                </Col>
+
+                <Col xs={12} md={12} lg={4}>
+                  <Button style={{ width: "200px", backgroundColor: "red", border: "none" }} onClick={()=>shareOnYoutube(Mision.links.video_link)}>
+                    <FontAwesomeIcon icon={faYoutube } /> Ver video
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
           </Col>
 
           {/* Columna derecha: Comentarios */}
           <Col sm={6}>
             <h3>Comentarios</h3>
             <Col sm={6}>
-    
-    {comentarios && comentarios.length > 0 ? (
-      <ul>
-       {comentarios && comentarios.length > 0 ? (
-    <ul>
-      {comentarios.map((comentario, index) => (
-        <li key={index} style={{ marginBottom: "15px" }}>
-          {/* Mostrar el email */}
-          <strong>Email:</strong> {comentario.email}
-          <br />
-          {/* Mostrar el comentario */}
-          <strong>Comentario:</strong> {comentario.comentario}
-          <br />
-          {/* Mostrar la valoración con las estrellas */}
-          <StarRatingInteractive rating={comentario.valoracion} onRatingChange={() => {}} />
-          <br />
-          {/* Mostrar la fecha */}
-          <strong>Fecha:</strong> {new Date(comentario.fecha).toLocaleDateString()}
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <p>No hay comentarios disponibles.</p>
-  )}
-      </ul>
-    ) : (
-      <p>No hay comentarios disponibles.</p>
-    )}
-  </Col>
-
-
-
-
+              {comentarios && comentarios.length > 0 ? (
+                <ul>
+                  {comentarios && comentarios.length > 0 ? (
+                    <ul>
+                      {comentarios.map((comentario, index) => (
+                        <li key={index} style={{ marginBottom: "15px" }}>
+                          {/* Mostrar el email */}
+                          <strong>Email:</strong> {comentario.email}
+                          <br />
+                          {/* Mostrar el comentario */}
+                          <strong>Comentario:</strong> {comentario.comentario}
+                          <br />
+                          {/* Mostrar la valoración con las estrellas */}
+                          <StarRatingInteractive
+                            rating={comentario.valoracion}
+                            onRatingChange={() => {}}
+                          />
+                          <br />
+                          {/* Mostrar la fecha */}
+                          <strong>Fecha:</strong>{" "}
+                          {new Date(comentario.fecha).toLocaleDateString()}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No hay comentarios disponibles.</p>
+                  )}
+                </ul>
+              ) : (
+                <p>No hay comentarios disponibles.</p>
+              )}
+            </Col>
 
             {/* Formulario para agregar un nuevo comentario */}
             <h3>Agregar un comentario</h3>
@@ -385,10 +410,15 @@ const DetalleMision = () => {
               {/* Valoración interactiva con estrellas */}
               <Form.Group controlId="formValoracion">
                 <Form.Label>Valoración</Form.Label>
-                <StarRatingInteractive rating={nuevoComentario.valoracion} onRatingChange={handleRatingChange} />
+                <StarRatingInteractive
+                  rating={nuevoComentario.valoracion}
+                  onRatingChange={handleRatingChange}
+                />
               </Form.Group>
 
-              <Button variant="primary" type="submit">Enviar comentario</Button>
+              <Button variant="primary" type="submit">
+                Enviar comentario
+              </Button>
             </Form>
           </Col>
         </Row>
